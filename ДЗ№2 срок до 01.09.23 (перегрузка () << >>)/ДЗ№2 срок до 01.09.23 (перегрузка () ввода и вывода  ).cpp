@@ -57,7 +57,7 @@ public:
     // Перегрузка оператора преобразования в int, возвращает длину строки
     operator int() const
     {
-        return static_cast<int>(length);
+        return static_cast<int>(length);//https://metanit.com/cpp/tutorial/5.15.php
     }
 
     // Дружественная функция - перегрузка оператора вывода (<<)
