@@ -1,4 +1,4 @@
-﻿// ДЗ№2 перегрузка операторов вводв и вывода
+// ДЗ№2 перегрузка операторов вводв и вывода
 //
 // Задание 1. В ранее реализованный класс String добавьте перегрузку
 // операторов >> и << для ввода и вывода строки в поток.
@@ -7,12 +7,12 @@
 // Результирующее число должно быть равно длине строки без учёта
 // символа окончания строки.
 //
-//
+// https://metanit.com/cpp/tutorial/5.15.php
 
 #include <iostream>
 #include <cstring>
 #include <string>
-#include <windows.h> // для setconsoleCP
+#include <windows.h> // для setconsoleCP;
 
 using namespace std;
 
@@ -27,7 +27,7 @@ public:
     String() : data(nullptr), length(0) {}
 
     // Конструктор класса
-    String(const char* str)     
+    String(const char* str)
     {
         length = strlen(str);                 // Вычисляем длину строки
         data = new char[length + 1];          // Выделяем память для копии строки (+1 для нулевого символа)
@@ -47,8 +47,7 @@ public:
         {
             if (data[i] == target)            // Если символ совпадает с целевым символом
             {
-                //return int(i);                // Возвращаем индекс символа (приведение к int)
-                return static_cast<int>(i);
+                return int(i);                // Возвращаем индекс символа (приведение к int)
             }
         }
         return -1;                            // Если символ не найден, возвращаем -1
@@ -57,7 +56,7 @@ public:
     // Перегрузка оператора преобразования в int, возвращает длину строки
     operator int() const
     {
-        return static_cast<int>(length);//https://metanit.com/cpp/tutorial/5.15.php
+        return int(length);                  // без нулевого символа
     }
 
     // Дружественная функция - перегрузка оператора вывода (<<)
@@ -77,10 +76,9 @@ ostream& operator<<(ostream& os, const String& str)
 // Перегрузка оператора ввода (>>) для объекта String
 istream& operator>>(istream& is, String& str)
 {
-    char buffer[4096]; // Буфер для ввода строки
-    is.getline(buffer, sizeof(buffer)); // Считываем строку до символа новой строки
-    //is >> buffer;// Чтение строки из потока
-    str = String(buffer);// Присваиваем объекту String значение из буфера
+    char buffer[256];                                     // Буфер для ввода строки
+    is >> buffer;                                         // Чтение строки из потока
+    str = String(buffer);                                 // Присваиваем объекту String значение из буфера
     return is;
 }
 
@@ -93,10 +91,10 @@ int main()
 
     String myString("Привет, мир!");
     cout << "Длина строки: " << myString << " = " << int(myString) << endl << endl;
-    
+
     String inputString;
     cout << "Введите предложение, слово или символ: ";
-    cin >> inputString;// Здесь мы считываем слово, а не всю строку
+    cin >> inputString;                                  // Здесь мы считываем слово, а не всю строку
     cout << "Вы ввели: " << inputString << endl;
 
 
