@@ -28,9 +28,14 @@ int main()
 	cout << "\t*             Программа: Игра на угадывание слова V0.1             *" << endl;
 	cout << "\t********************************************************************" << endl;
 
+	cout << "\n===================================================================================" << endl;
+	cout << "\nДанные, невидимые для пользователя, выводятся только для тестирования:" << endl;
+
 	int sizeStr = 5;
 	// Инициализация массива объектов класса String
-	string Words[]{ "Привет", "Мир", "Играем", "Разгадай", "Слово"};
+	//string Words[]{ "Привет", "Мир", "Играем", "Разгадай", "Слово"};
+	string Words[]{ "Hello", "World", "hello", "world", "peoples" };
+
 
 	// Вывод массива на экран
 	cout << "\n\tСписок загаданных слов:" << endl << endl;
@@ -41,29 +46,98 @@ int main()
 	// выбор рандомного слова
 	srand(time(0)); // автоматическая рандомизация
 	int randNumber = rand() % sizeStr;
-	cout << "\tСлучайно выбраное слово для игры: '" << Words[randNumber] <<"'" << endl;
+	string randWord = Words[randNumber];
+	cout << "\tСлучайно выбраное слово для игры: '" << randWord <<"'" << endl << endl;
 
-	cout << "===========================================================================" << endl << endl;
-	cout << "Игра началась!" << endl;
+	cout << "===================================================================================" << endl << endl;
+	cout << "\tИгра началась!\n" << endl;
 
 	// подсчет количества букв выбранного слова
-	cout << "\tКол-во букв в загаданном слове: " << Words[randNumber].length() << endl;;
+	int countLetter = Words[randNumber].length();
+	cout << "\tКол-во букв в загаданном слове: " << countLetter << endl;;
 	cout << endl;
-	cout << "\tОтгадайте загаданное слово:" << endl;
-
-	cout << "\tВведите свой вариант слова:" << endl;
+	cout << "\tОтгадайте загаданное слово:\n" << endl;
 
 	string userWord{};
 	cin >> userWord;
 
-	while (Words[randNumber] != userWord)
-	{
-		cout << "Введенное слово не совпадает с загаданным, попробуйте ещё раз:" << endl;
-		cin >> userWord;
-	}
-	cout << "Вы выиграли! Слово угадано! Компьтер загадал слово: " << Words[randNumber] << endl;
 	
+	int maxAttempts = 5; // Максимальное количество попыток
+	int attempts = 1; // Счетчик попыток
 
+	// Проверка на совпадение введенного слова с загаданным
+	while (userWord != randWord)
+	{
+		if (userWord == randWord)
+		{
+			cout << "\nПоздравляем! Вы выиграли! Слово угадано за " << attempts << " попыток! Компьютер загадал слово : " << randWord << endl;
+			break;
+		}
+		else
+		{
+			// Реализация ограничения попыток ввода
+			while (attempts != maxAttempts)
+			{
+				if (attempts == maxAttempts)
+				{
+
+					cout << "\nВсе попытки истрачены! Слово не отгадано! Вы проиграли!" << endl;
+					break;
+				}
+				else
+				{
+					// Реализация проверки на правильную длину введенного слова
+					while (userWord.length() != countLetter)
+					{
+
+						cout << "\tВведенное слово имеет неправильную длину. Попробуйте ещё раз:" << endl;
+						cin >> userWord;
+					}
+					if (userWord == randWord)
+					{
+						cout << "\nПоздравляем! Вы выиграли! Слово угадано за " << attempts << " попыток! Компьютер загадал слово : " << randWord << endl;
+						break;
+					}
+					else
+					{
+						if (userWord != randWord)
+						{
+							// Реализация вывода совпадающих букв на экран
+						    // Создаем строку для хранения совпадающих букв
+							string containLetters;
+
+							// Проверяем каждую букву в загаданном слове
+							for (int i = 0; i < countLetter; i++)
+							{
+								char letter = randWord[i];
+								// Проверяем, есть ли эта буква в слове игрока
+								if (userWord.find(letter) != string::npos)
+								{
+									// Если есть, добавляем ее к строке с совпадающими буквами
+									containLetters += letter;
+								}
+							}
+
+							// Если есть совпадающие буквы, выводим их на экран
+							if (!containLetters.empty())
+							{
+								cout << "\tСовпадающие буквы: " << containLetters << endl;
+								cout << "\tПопробуйте ещё раз:" << endl;
+								cin >> userWord;
+								++attempts;
+							}
+						}
+						else
+						{
+							cout << "\t\nВведенное слово не совпадает с загаданным, попробуйте ещё раз:" << endl;
+							cin >> userWord;
+							++attempts;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	return 0;
 }
