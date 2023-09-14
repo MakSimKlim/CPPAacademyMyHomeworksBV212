@@ -1,4 +1,5 @@
 ﻿// ДЗ 11 до 23.09.23 Бинарные деревья_задача
+// 
 // Задание 1. Напишите класс Tree, который будет хранить узлы типа Apple.
 // Каждый узел Apple хранит вес яблока в граммах, помимо информации нужной
 // для дерева.Apple распределяются по дереву по их весу(для класса Apple
@@ -12,29 +13,31 @@
 
 using namespace std;
 
-class Apple {
+class Apple 
+{
 public:
-    Apple(int weight) : weight_(weight) {}
+    Apple(int weight) : appleWeight(weight) {}
 
     // Перегрузка оператора равенства для сравнения яблок по весу
     bool operator==(const Apple& other) const {
-        return weight_ == other.weight_;
+        return appleWeight == other.appleWeight;
     }
 
     // Перегрузка оператора сравнения для сортировки яблок по весу
     bool operator<(const Apple& other) const {
-        return weight_ < other.weight_;
+        return appleWeight < other.appleWeight;
     }
 
     int getWeight() const {
-        return weight_;
+        return appleWeight;
     }
 
 private:
-    int weight_;
+    int appleWeight;
 };
 
-class TreeNode {
+class TreeNode 
+{
 public:
     Apple apple;
     TreeNode* left;
@@ -43,17 +46,20 @@ public:
     TreeNode(const Apple& a) : apple(a), left(nullptr), right(nullptr) {}
 };
 
-class Tree {
+class Tree 
+{
 public:
     Tree() : root(nullptr) {}
 
     // Вставка яблока в бинарное дерево
-    void insert(const Apple& apple) {
+    void insert(const Apple& apple) 
+    {
         root = insertRecursive(root, apple);
     }
 
     // Рекурсивная функция для вставки яблока в дерево
-    TreeNode* insertRecursive(TreeNode* node, const Apple& apple) {
+    TreeNode* insertRecursive(TreeNode* node, const Apple& apple) 
+    {
         if (node == nullptr) {
             return new TreeNode(apple);
         }
@@ -73,7 +79,8 @@ public:
     }
 
     // Вывод содержимого дерева в порядке возрастания веса яблок
-    void printApples() const {
+    void printApples() const 
+    {
         inorderTraversal(root);
     }
 
@@ -81,24 +88,28 @@ private:
     TreeNode* root;
 
     // Рекурсивный обход дерева в порядке возрастания
-    void inorderTraversal(TreeNode* node) const {
+    void inorderTraversal(TreeNode* node) const 
+    {
         if (node != nullptr) {
             inorderTraversal(node->left);
-            cout << "Apple weight: " << node->apple.getWeight() << " grams\n";
+            cout << "Вес яблока: " << node->apple.getWeight() << " грамм\n";
             inorderTraversal(node->right);
         }
     }
 };
 
-int main() {
+int main() 
+{
+    setlocale(LC_ALL, "Rus");
     // Инициализируем генератор случайных чисел с использованием времени
     srand(time(0));
 
     Tree tree;
 
     // Создаем 20 объектов типа Apple со случайным весом и добавляем их в дерево
-    for (int i = 0; i < 20; ++i) {
-        int weight = rand() % 151 + 50; // Генерируем случайный вес от 50 до 200 грамм
+    for (int i = 0; i < 20; ++i) 
+    {
+        int weight = rand() % 150 + 50; // Генерируем случайный вес от 50 до 200 грамм
         Apple apple(weight);
         tree.insert(apple);
     }
