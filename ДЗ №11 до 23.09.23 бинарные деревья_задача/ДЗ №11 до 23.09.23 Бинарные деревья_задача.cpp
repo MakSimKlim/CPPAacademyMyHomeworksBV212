@@ -1,4 +1,4 @@
-﻿// ДЗ 11 до 23.09.23 Бинарные деревья_задача
+// ДЗ 11 до 23.09.23 Бинарные деревья_задача
 // 
 // Задание 1. Напишите класс Tree, который будет хранить узлы типа Apple.
 // Каждый узел Apple хранит вес яблока в граммах, помимо информации нужной
@@ -13,87 +13,175 @@
 
 using namespace std;
 
+// Класс для представления яблока
 class Apple 
 {
 public:
-    Apple(int weight) : appleWeight(weight) {}
+    Apple(int weight) : weight_(weight) {}
 
     // Перегрузка оператора равенства для сравнения яблок по весу
-    bool operator==(const Apple& other) const {
-        return appleWeight == other.appleWeight;
+    bool operator==(const Apple& other) const 
+    {
+        return weight_ == other.weight_;
     }
 
     // Перегрузка оператора сравнения для сортировки яблок по весу
-    bool operator<(const Apple& other) const {
-        return appleWeight < other.appleWeight;
+    bool operator<(const Apple& other) const 
+    {
+        return weight_ < other.weight_;
     }
 
-    int getWeight() const {
-        return appleWeight;
+    int getWeight() const 
+    {
+        return weight_;
     }
 
 private:
-    int appleWeight;
+    int weight_;
 };
 
-class TreeNode 
-{
-public:
-    Apple apple;
-    TreeNode* left;
-    TreeNode* right;
-
-    TreeNode(const Apple& a) : apple(a), left(nullptr), right(nullptr) {}
-};
-
+// Класс для бинарного дерева
 class Tree 
 {
+private:
+    // Узел дерева
+    struct TreeNode 
+    {
+        Apple data;
+        TreeNode* left;
+        TreeNode* right;
+        TreeNode* parent;
+
+        TreeNode(const Apple& apple) : data(apple), left(nullptr), right(nullptr), parent(nullptr) {}
+    };
+
 public:
     Tree() : root(nullptr) {}
 
-    // Вставка яблока в бинарное дерево
+    // Вставка элемента в дерево
     void insert(const Apple& apple) 
     {
         root = insertRecursive(root, apple);
     }
 
-    // Рекурсивная функция для вставки яблока в дерево
-    TreeNode* insertRecursive(TreeNode* node, const Apple& apple) 
+    // Поиск элемента в дереве
+    TreeNode* search(const Apple& apple) 
     {
-        if (node == nullptr) {
-            return new TreeNode(apple);
-        }
-
-        if (apple < node->apple) {
-            node->left = insertRecursive(node->left, apple);
-        }
-        else if (apple == node->apple) {
-            // Обработка ситуации, когда яблоко уже существует
-            // (в данном случае можно игнорировать, ничего не делать)
-        }
-        else {
-            node->right = insertRecursive(node->right, apple);
-        }
-
-        return node;
+        return searchRecursive(root, apple);
     }
 
-    // Вывод содержимого дерева в порядке возрастания веса яблок
-    void printApples() const 
+    // Удаление элемента из дерева
+    void remove(const Apple& apple) 
     {
-        inorderTraversal(root);
+        root = removeRecursive(root, apple);
+    }
+
+    // Вывод элементов дерева в порядке возрастания
+    void inorderTraversal() 
+    {
+        inorderRecursive(root);
     }
 
 private:
     TreeNode* root;
 
-    // Рекурсивный обход дерева в порядке возрастания
-    void inorderTraversal(TreeNode* node) const 
+    // Рекурсивная функция вставки элемента
+    TreeNode* insertRecursive(TreeNode* node, const Apple& apple) 
     {
-        if (node != nullptr) {
-            inorderTraversal(node->left);
-            cout << "Вес яблока: " << node->apple.getWeight() << " грамм\n";
-            inorderTraversal(node->right);
+        if (node == nullptr) 
+        {
+            return new TreeNode(apple);
+        }
+
+        if (apple < node->data) 
+        {
+            node->left = insertRecursive(node->left, apple);
+            node->left->parent = node;
+        }
+        else 
+        {
+            node->right = insertRecursive(node->right, apple);
+            node->right->parent = node;
+        }
+
+        return node;
+    }
+
+    // Рекурсивная функция поиска элемента
+    TreeNode* searchRecursive(TreeNode* node, const Apple& apple) 
+    {
+        if (node == nullptr || node->data == apple) 
+        {
+            return node;
+        }
+
+        if (apple < node->data) 
+        {
+            return searchRecursive(node->left, apple);
+        }
+        else 
+        {
+            return searchRecursive(node->right, apple);
+        }
+    }
+
+    // Рекурсивная функция удаления элемента
+    TreeNode* removeRecursive(TreeNode* node, const Apple& apple) 
+    {
+        if (node == nullptr) 
+        {
+            return node;
+        }
+
+        if (apple == node->data) 
+        {
+            if (node->left == nullptr) 
+            {
+                TreeNode* temp = node->right;
+                delete node;
+                return temp;
+            }
+            else if (node->right == nullptr) 
+            {
+                TreeNode* temp = node->left;
+                delete node;
+                return temp;
+            }
+
+            TreeNode* minRight = findMin(node->right);
+            node->data = minRight->data;
+            node->right = removeRecursive(node->right, minRight->data);
+        }
+        else if (apple < node->data) 
+        {
+            node->left = removeRecursive(node->left, apple);
+        }
+        else 
+        {
+            node->right = removeRecursive(node->right, apple);
+        }
+
+        return node;
+    }
+
+    // Рекурсивная функция поиска минимального элемента
+    TreeNode* findMin(TreeNode* node) 
+    {
+        while (node->left != nullptr) 
+        {
+            node = node->left;
+        }
+        return node;
+    }
+
+    // Рекурсивная функция вывода элементов дерева в порядке возрастания
+    void inorderRecursive(TreeNode* node) 
+    {
+        if (node != nullptr) 
+        {
+            inorderRecursive(node->left);
+            cout << "Вес яблока: " << node->data.getWeight() << " грамм\n";
+            inorderRecursive(node->right);
         }
     }
 };
@@ -101,21 +189,23 @@ private:
 int main() 
 {
     setlocale(LC_ALL, "Rus");
-    // Инициализируем генератор случайных чисел с использованием времени
+
     srand(time(0));
 
     Tree tree;
 
-    // Создаем 20 объектов типа Apple со случайным весом и добавляем их в дерево
+    // Создаем 20 объектов типа Apple со случайным весом от 50 до 200 грамм
     for (int i = 0; i < 20; ++i) 
     {
-        int weight = rand() % 150 + 50; // Генерируем случайный вес от 50 до 200 грамм
+        int weight = rand() % 151 + 50; // Генерируем случайный вес от 50 до 200 грамм
         Apple apple(weight);
         tree.insert(apple);
     }
 
-    // Выводим информацию о яблоках в дереве
-    tree.printApples();
+
+    // Выводим элементы дерева в порядке возрастания
+    cout << "Вес яблок по-возрастанию:\n";
+    tree.inorderTraversal();
 
     return 0;
 }
