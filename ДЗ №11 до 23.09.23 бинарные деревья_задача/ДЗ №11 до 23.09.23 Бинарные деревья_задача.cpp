@@ -1,4 +1,4 @@
-// ДЗ 11 до 23.09.23 Бинарные деревья_задача
+﻿// ДЗ 11 до 23.09.23 Бинарные деревья_задача
 // 
 // Задание 1. Напишите класс Tree, который будет хранить узлы типа Apple.
 // Каждый узел Apple хранит вес яблока в граммах, помимо информации нужной
@@ -6,8 +6,6 @@
 // нужно перегрузить операторы равенства и сравнения). Для проверки класса
 // Tree, в main создайте 20 объектов типа Apple со случайным весом от 50 до 200
 // грамм.
-//
-// http://ci-plus-plus-snachala.ru/?p=1249
 
 #include <iostream>
 #include <cstdlib>
@@ -19,27 +17,29 @@ using namespace std;
 class Apple 
 {
 public:
-    Apple(int weight) : weight_(weight) {}
+    Apple(int appleWeight) : weight(appleWeight) {}
 
     // Перегрузка оператора равенства для сравнения яблок по весу
-    bool operator==(const Apple& other) const 
-    {
-        return weight_ == other.weight_;
+    bool operator==(const Apple& other) const {
+        return weight == other.weight;
     }
 
-    // Перегрузка оператора сравнения для сортировки яблок по весу
-    bool operator<(const Apple& other) const 
-    {
-        return weight_ < other.weight_;
+    // Перегрузка оператора меньше для сравнения яблок по весу
+    bool operator<(const Apple& other) const {
+        return weight < other.weight;
     }
 
+    // Перегрузка оператора больше для сравнения яблок по весу
+    bool operator>(const Apple& other) const {
+        return weight > other.weight;
+    }
     int getWeight() const 
     {
-        return weight_;
+        return weight;
     }
 
 private:
-    int weight_;
+    int weight; // вес яблока в граммах
 };
 
 // Класс для бинарного дерева
