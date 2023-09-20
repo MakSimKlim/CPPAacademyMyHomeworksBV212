@@ -9,101 +9,97 @@
 #define _CRT_SECURE_NO_WARNINGS 0; // чтобы не было ошибки на fopen
 
 #include <iostream>
-#include <fstream>
+#include <cstdio>
 #include <string>
-#include <io.h>
 
 using namespace std;
 
 // Функция для шифрования строки шифром Цезаря
-string encryptCesarCipher(const string& input, int shift) 
+string CesarCipher(const string& input, int shift) 
 {
-    string result = input;                         // Создаем копию входной строки для шифрования
-    for (char& c : result)                         // Итерируемся по каждому символу в строке
-    { 
+    // Создаем копию входной строки
+    string result = input;
+
+    // Проходим по каждому символу в строке
+    for (char& c : result) 
+    {
+        // Проверяем, является ли символ буквой
         if (isalpha(c)) 
-        { 
-            char base = isupper(c) ? 'A' : 'a';   // Определяем базовую букву ('A' для заглавных, 'a' для строчных)
-            c = ((c - base + shift) % 26) + base; // Применяем шифр Цезаря с заданным сдвигом
+        {
+            // Определяем базовую букву (верхний или нижний регистр)
+            char base = isupper(c) ? 'A' : 'a';
+            // Применяем шифр Цезаря с учетом сдвига
+            c = ((c - base + shift) % 26) + base;
         }
     }
-    return result;                                // Возвращаем зашифрованную строку
+
+    // Возвращаем зашифрованную строку
+    return result;
+}
+// функция копирования и шифрования файла
+bool copyAndEncryptFile(const char* source, const char* dest, int shift) 
+{
+    FILE* src, * dst;
+
+    // Открытие файла для чтения
+    if (!(src = fopen(source, "rb"))) 
+    {
+        cerr << "Не удалось открыть входной файл." << endl;
+        return false;
+    }
+
+    // Открытие файла для записи в бинарном режиме
+    if (!(dst = fopen(dest, "wb"))) 
+    {
+        cerr << "Не удалось открыть выходной файл." << endl;
+        fclose(src);
+        return false;
+    }
+
+    char data;
+
+    // Копируем данные и шифруем
+    while (fread(&data, sizeof(char), 1, src) == 1) 
+    {
+        if (isalpha(data)) 
+        {
+            data = CesarCipher(string(1, data), shift)[0];
+        }
+        fwrite(&data, sizeof(char), 1, dst);
+    }
+
+    // Закрываем файлы
+    fclose(src);
+    fclose(dst);
+
+    return true;
 }
 
 int main() 
 {
     setlocale(LC_ALL, "Rus");
-
     string inputFileName, outputFileName;
     int shift;
 
+    // Ввод имени входного файла, имени выходного файла и сдвига с клавиатуры
     cout << "Введите имя файла для чтения: ";
     cin >> inputFileName;
-
-    //проверка существует ли этот файл
-    // src_path.c_str() - конвертация в char (метод c_str)
-    if (_access(inputFileName.c_str(), 00) == -1)
-    {
-        cout << "\nУказан неверный путь к файлу\n";
-    }
 
     cout << "Введите имя файла для записи (бинарный): ";
     cin >> outputFileName;
 
-    //если файл существкет, провери мего наперезапись
-    if (_access(outputFileName.c_str(), 00) == 0)
-    {
-        cout << "Такой файл существует. Перезаписать? Y/N >";
-        string answer;
-        cin >> answer;
-        if (answer.find_first_of("yYдД"))//если хотим перезаписать
-        {
-            if (_access(outputFileName.c_str(), 02) == -1) //проверка права на запись
-            {
-                cout << "\nНет прав записи файла.\n";
-            }
-        }
-        else {
-            cout << "\nОперация отменена!\n";
-
-            return 0;
-        }
-
-    }
-
     cout << "Введите сдвиг для шифра Цезаря: ";
     cin >> shift;
 
-    ifstream inputFile(inputFileName);                      // Создаем объект для чтения файла
-    if (!inputFile) 
+    // Вызываем функцию копирования и шифрования файла
+    if (copyAndEncryptFile(inputFileName.c_str(), outputFileName.c_str(), shift)) 
     {
-        cerr << "Не удалось открыть входной файл." << endl; // Выводим сообщение об ошибке, если файл не удалось открыть
-        return 1;                                           // Возвращаем код ошибки
+        cout << "Шифрование и запись в бинарный файл завершены успешно." << endl;
+    }
+    else 
+    {
+        cerr << "Не удалось скопировать и зашифровать файл." << endl;
     }
 
-    ofstream outputFile(outputFileName, ios::binary);       // Создаем объект для записи в бинарный файл
-    if (!outputFile) 
-    {
-        cerr << "Не удалось открыть выходной файл." << endl;// Выводим сообщение об ошибке, если файл не удалось открыть
-        return 1;                                           // Возвращаем код ошибки
-    }
-
-    string line;
-
-    while (getline(inputFile, line))                        // Считываем строки из входного файла по одной
-    {
-        // Шифруем строку и записываем в бинарный файл
-        string encryptedLine = encryptCesarCipher(line, shift); // Вызываем функцию для шифрования
-        outputFile.write(encryptedLine.c_str(), encryptedLine.size()); // Записываем зашифрованную строку в бинарный файл
-        outputFile.put(' ');  // Добавляем пробел между зашифрованными строками
-    
-    }
-
-    // Закрываем файлы
-    inputFile.close();
-    outputFile.close();
-
-    cout << "Шифрование завершено успешно." << endl;
-
-    return 0;
+    return 0; // Завершаем программу с кодом возврата 0
 }
