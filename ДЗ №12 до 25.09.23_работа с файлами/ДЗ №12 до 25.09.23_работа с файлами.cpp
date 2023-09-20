@@ -95,7 +95,7 @@ int main()
         // Шифруем строку и записываем в бинарный файл
         string encryptedLine = encryptCesarCipher(line, shift); // Вызываем функцию для шифрования
         outputFile.write(encryptedLine.c_str(), encryptedLine.size()); // Записываем зашифрованную строку в бинарный файл
-        //outputFile.put(' ');  // Добавляем пробел между зашифрованными строками
+        outputFile.put(' ');  // Добавляем пробел между зашифрованными строками
     
     }
 
