@@ -1,4 +1,4 @@
-﻿// ДЗ #16_Умные указатели
+// ДЗ #16_Умные указатели
 //
 //Тема: У мные указатели
 //Задание 1. Создайте пользовательские классы умных указателей.Один из
@@ -11,12 +11,14 @@
 using namespace std;
 
 // Простой класс для демонстрации
-class MyClass {
+class MyClass
+{
 public:
     MyClass(int val) : value(val) {}
 
-    void print() {
-        cout << "Value: " << value << endl;
+    void print()
+    {
+        cout << "Значение: " << value << endl;
     }
 
 private:
@@ -25,23 +27,27 @@ private:
 
 // Реализация умного указателя, аналогичного std::unique_ptr
 template <typename T>
-class MyUniquePtr {
+class MyUniquePtr
+{
 public:
     // Конструктор
     MyUniquePtr(T* ptr) : data(ptr) {}
 
     // Деструктор, освобождает память
-    ~MyUniquePtr() {
+    ~MyUniquePtr()
+    {
         delete data;
     }
 
     // Оператор разыменования
-    T& operator*() const {
+    T& operator*() const
+    {
         return *data;
     }
 
     // Оператор доступа к члену
-    T* operator->() const {
+    T* operator->() const
+    {
         return data;
     }
 
@@ -51,18 +57,21 @@ private:
 
 // Реализация умного указателя, аналогичного std::shared_ptr
 template <typename T>
-class MySharedPtr {
+class MySharedPtr
+{
 public:
     // Конструктор
     MySharedPtr(T* ptr) : data(ptr), count(new size_t(1)) {}
 
     // Конструктор копирования
-    MySharedPtr(const MySharedPtr& other) : data(other.data), count(other.count) {
+    MySharedPtr(const MySharedPtr& other) : data(other.data), count(other.count)
+    {
         (*count)++;
     }
 
     // Деструктор, уменьшает счетчик и освобождает память, если необходимо
-    ~MySharedPtr() {
+    ~MySharedPtr()
+    {
         (*count)--;
         if (*count == 0) {
             delete data;
@@ -71,12 +80,14 @@ public:
     }
 
     // Оператор разыменования
-    T& operator*() const {
+    T& operator*() const
+    {
         return *data;
     }
 
     // Оператор доступа к члену
-    T* operator->() const {
+    T* operator->() const
+    {
         return data;
     }
 
@@ -85,7 +96,9 @@ private:
     size_t* count;
 };
 
-int main() {
+int main()
+{
+    setlocale(LC_ALL, "Rus");
     // Пример использования MyUniquePtr
     MyUniquePtr<MyClass> uniquePtr(new MyClass(42));
     uniquePtr->print();
